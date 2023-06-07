@@ -1,5 +1,4 @@
 {-# OPTIONS_HADDOCK not-home #-}
-{-# LANGUAGE BangPatterns #-}
 {-# LANGUAGE DeriveFunctor #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE FlexibleContexts #-}
@@ -768,6 +767,7 @@ unconsEitherM (SealedConduitT p) = go p
 -- Since 1.2.3
 fuse :: Monad m => ConduitT a b m () -> ConduitT b c m r -> ConduitT a c m r
 fuse = (=$=)
+{-# INLINE fuse #-}
 
 -- | Combine two @Conduit@s together into a new @Conduit@ (aka 'fuse').
 --
@@ -839,7 +839,7 @@ src $$ sink = do
 -- Since 0.4.0
 (=$=) :: Monad m => Conduit a m b -> ConduitT b c m r -> ConduitT a c m r
 ConduitT left0 =$= ConduitT right0 = ConduitT $ \rest ->
-    let goRight !left !right =
+    let goRight left right =
             case right of
                 HaveOutput p o    -> HaveOutput (recurse p) o
                 NeedInput rp rc   -> goLeft rp rc left
@@ -849,7 +849,7 @@ ConduitT left0 =$= ConduitT right0 = ConduitT $ \rest ->
           where
             recurse = goRight left
 
-        goLeft !rp !rc left =
+        goLeft rp rc left =
             case left of
                 HaveOutput left' o        -> goRight left' (rp o)
                 NeedInput left' lc        -> NeedInput (recurse . left') (recurse . lc)
