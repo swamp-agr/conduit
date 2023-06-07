@@ -705,7 +705,7 @@ consume, consumeC :: Monad m => ConduitT a o m [a]
 consumeC =
     loop id
   where
-    loop front = await >>= maybe (return $ front []) (\(!x) -> loop $ front . (x:))
+    loop front = await >>= maybe (return $ front []) (\x -> loop $ front . (x:))
 {-# INLINE consumeC #-}
 STREAMING0(consume, consumeC, consumeS)
 

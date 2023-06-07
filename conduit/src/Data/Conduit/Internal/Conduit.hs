@@ -838,7 +838,7 @@ src $$ sink = do
 -- Since 0.4.0
 (=$=) :: Monad m => Conduit a m b -> ConduitT b c m r -> ConduitT a c m r
 ConduitT left0 =$= ConduitT right0 = ConduitT $ \rest ->
-    let goRight left right =
+    let goRight !left !right =
             case right of
                 HaveOutput p o    -> HaveOutput (recurse p) o
                 NeedInput rp rc   -> goLeft rp rc left
@@ -848,7 +848,7 @@ ConduitT left0 =$= ConduitT right0 = ConduitT $ \rest ->
           where
             recurse = goRight left
 
-        goLeft rp rc left =
+        goLeft !rp !rc left =
             case left of
                 HaveOutput left' o        -> goRight left' (rp o)
                 NeedInput left' lc        -> NeedInput (recurse . left') (recurse . lc)
