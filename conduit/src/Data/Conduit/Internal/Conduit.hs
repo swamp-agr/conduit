@@ -1,4 +1,5 @@
 {-# OPTIONS_HADDOCK not-home #-}
+{-# LANGUAGE BangPatterns #-}
 {-# LANGUAGE DeriveFunctor #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE FlexibleContexts #-}
